@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { User } from "./Signup";
+import { getInitials } from "./Signup";
 
 type Tweet = {
   id: string;
@@ -9,8 +11,14 @@ type Tweet = {
 
 export default function Home() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("loggedInUser");
+    if (storedUser) {
+      setLoggedInUser(JSON.parse(storedUser));
+    }
+
     const fetchTweetsAndUsers = async () => {
       try {
         const tweetsData = await (
@@ -20,23 +28,10 @@ export default function Home() {
           await fetch("http://localhost:3001/users")
         ).json();
 
-        const getInitials = (name: string) => {
-          if (!name) {
-            return "JD";
-          }
-
-          const initials = name
-            .split(" ")
-            .reduce((result, currentWord) => result + currentWord[0], "");
-
-          return initials;
-        };
-
         const tweetModelArr: Tweet[] = tweetsData.map(
           (tweet: { id: string; author_id: string; text: string }) => {
             let user = usersData.find(
-              (user: { id: string; name: string; email: string }) =>
-                user.id === tweet.author_id
+              (user: User) => user.id === tweet.author_id
             );
             return {
               id: tweet.id,
@@ -56,17 +51,49 @@ export default function Home() {
 
   const refInput = useRef<HTMLInputElement>(null);
 
-  function handleTweet(e: any) {
+  async function handleTweet(e: any) {
     e.preventDefault();
-    if (refInput.current) {
+    if (refInput.current && loggedInUser) {
       console.log(refInput.current.value);
-      const newTweet: Tweet = {
+      const newTweet: { id: string; author_id: string; text: string } = {
         id: Math.random().toString(),
-        name: "Ale",
+        author_id: loggedInUser.id,
         text: refInput.current.value,
-        initials: "AM",
       };
-      setTweets((prevSt) => [...prevSt, newTweet]);
+      //   setTweets((prevSt) => [
+      //     ...prevSt,
+      //     {
+      //       id: newTweet.id,
+      //       text: newTweet.text,
+      //       name: loggedInUser.name,
+      //       initials: loggedInUser.initials,
+      //     },
+      //   ]);
+
+      try {
+        const response = await fetch("http://localhost:3001/tweets", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTweet),
+        });
+        if (response.status === 201) {
+          const createdTweet = await response.json();
+          setTweets((prevTweets) => [
+            ...prevTweets,
+            {
+              id: createdTweet.id,
+              text: createdTweet.text,
+              name: loggedInUser.name,
+              initials: loggedInUser.initials,
+            },
+          ]);
+          console.log("Tweet added: ", createdTweet);
+        }
+      } catch (err) {
+        console.error("Error adding tweet: ", err);
+      }
     }
   }
 
@@ -74,10 +101,14 @@ export default function Home() {
     <>
       <header>
         <div>Another Twitter Clone</div>
-        <div className="user-info">
-          <span className="username">John Smith</span>
-          <span className="user-avatar">JS</span>
-        </div>
+        {loggedInUser && (
+          <>
+            <div className="user-info">
+              <span className="username">{loggedInUser.name}</span>
+              <span className="user-avatar">{loggedInUser.initials}</span>
+            </div>
+          </>
+        )}
       </header>
       <div className="container">
         <section className="new-tweet">

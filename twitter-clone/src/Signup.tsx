@@ -1,7 +1,23 @@
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
+  initials?: string;
+};
+export const getInitials = (name: any) => {
+  if (!name) {
+    return "";
+  }
+
+  const initials = name
+    .split(" ")
+    .reduce(
+      (result: string, currentWord: string) =>
+        result + currentWord[0].toUpperCase(),
+      ""
+    );
+
+  return initials;
 };
 
 export default function Signup() {
@@ -21,6 +37,7 @@ export default function Signup() {
           id: data.username,
           name: data.fullname,
           email: data.email,
+          initials: getInitials(data.fullname),
         }),
       });
 
