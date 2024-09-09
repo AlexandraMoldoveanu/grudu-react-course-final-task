@@ -112,7 +112,9 @@ export default function Home() {
             <div className="user-info">
               <span className="username">{loggedInUser.name}</span>
               <span className="user-avatar">{loggedInUser.initials}</span>
-              <span onClick={onLogout}>Log out</span>
+              <span className="logout" onClick={onLogout}>
+                Log out
+              </span>
             </div>
           </>
         )}

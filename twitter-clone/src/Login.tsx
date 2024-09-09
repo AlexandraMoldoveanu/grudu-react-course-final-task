@@ -39,6 +39,7 @@ export default function Login() {
           name="username"
           placeholder="Username"
           onChange={(e) => setUsername(e.target.value)}
+          required
         ></input>
 
         <input
@@ -46,6 +47,7 @@ export default function Login() {
           type="password"
           name="password"
           placeholder="Password"
+          required
         ></input>
 
         <button className="button">Log in</button>

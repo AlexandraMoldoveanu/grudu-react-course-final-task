@@ -102,6 +102,12 @@
       "name": "amelia earhart",
       "email": "a@ha.com",
       "initials": "AE"
+    },
+    {
+      "id": "amelia",
+      "name": "amelia earhart",
+      "email": "ale@lsksj.com",
+      "initials": "AE"
     }
   ]
 }
