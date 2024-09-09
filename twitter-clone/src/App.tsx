@@ -3,6 +3,7 @@ import "./App.css";
 import HomePage from "./Home";
 import LoginPage from "./Login";
 import SignupPage from "./Signup";
+import AuthContextProvider from "./store/auth-context";
 
 const router = createBrowserRouter([
   { index: true, element: <HomePage></HomePage> },
@@ -11,7 +12,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+    </AuthContextProvider>
+  );
 }
 
 export default App;

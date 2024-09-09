@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./store/auth-context";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   //   const [password, setPassword] = useState(""); do i need this to be state here?
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -13,8 +17,8 @@ export default function Login() {
       if (response.status === 200) {
         const user = await response.json();
 
-        localStorage.setItem("loggedInUser", JSON.stringify(user));
-
+        login(user);
+        navigate("/");
         console.log("User logged in:", user);
       } else if (response.status === 404) {
         console.error("Login failed: User not found");
@@ -48,7 +52,7 @@ export default function Login() {
       </form>
 
       <div className="flex-center margin-sm">
-        Don't have an account? Sign up
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </div>
     </div>
   );

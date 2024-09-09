@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { User } from "./Signup";
 import { getInitials } from "./Signup";
+import { useAuth } from "./store/auth-context";
+import { useNavigate } from "react-router-dom";
 
 type Tweet = {
   id: string;
@@ -11,12 +13,12 @@ type Tweet = {
 
 export default function Home() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const { loggedInUser, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("loggedInUser");
-    if (storedUser) {
-      setLoggedInUser(JSON.parse(storedUser));
+    if (!loggedInUser) {
+      navigate("/login");
     }
 
     const fetchTweetsAndUsers = async () => {
@@ -47,7 +49,7 @@ export default function Home() {
       }
     };
     fetchTweetsAndUsers();
-  }, []);
+  }, [loggedInUser]);
 
   const refInput = useRef<HTMLInputElement>(null);
 
@@ -90,13 +92,17 @@ export default function Home() {
             },
           ]);
           console.log("Tweet added: ", createdTweet);
+          refInput.current.value = "";
         }
       } catch (err) {
         console.error("Error adding tweet: ", err);
       }
     }
   }
-
+  function onLogout() {
+    logout();
+    navigate("/login");
+  }
   return (
     <>
       <header>
@@ -106,6 +112,7 @@ export default function Home() {
             <div className="user-info">
               <span className="username">{loggedInUser.name}</span>
               <span className="user-avatar">{loggedInUser.initials}</span>
+              <span onClick={onLogout}>Log out</span>
             </div>
           </>
         )}

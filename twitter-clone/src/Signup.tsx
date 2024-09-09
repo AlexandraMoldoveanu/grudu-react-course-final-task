@@ -1,3 +1,5 @@
+import { Link, useNavigate } from "react-router-dom";
+
 export type User = {
   id: string;
   name: string;
@@ -21,6 +23,8 @@ export const getInitials = (name: any) => {
 };
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   async function handleSubmit(e: any) {
     e.preventDefault();
 
@@ -44,7 +48,8 @@ export default function Signup() {
       if (response.ok) {
         const user: User = await response.json();
         console.log("Signup successful, user authenticated:", user);
-        // Maybe redirect to login here??
+
+        navigate("/login");
       } else {
         console.error("Signup failed", response.status);
       }
@@ -83,7 +88,7 @@ export default function Signup() {
       </form>
 
       <div className="flex-center margin-sm">
-        Already have an account? Log in
+        Already have an account? <Link to="/login">Log in</Link>
       </div>
     </div>
   );
