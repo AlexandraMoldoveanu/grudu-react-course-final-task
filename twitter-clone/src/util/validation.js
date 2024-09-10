@@ -1,6 +1,7 @@
+import * as EmailValidator from "email-validator";
+
 export function isEmail(value) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(value);
+  return EmailValidator.validate(value);
 }
 
 export function isNotEmpty(value) {

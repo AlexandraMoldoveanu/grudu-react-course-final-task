@@ -15,6 +15,9 @@ header {
     background-color: #ffff;
     padding: 1rem;
   }
+  .username {
+    text-transform: capitalize;
+  }
 }
 
 .new-tweet {
