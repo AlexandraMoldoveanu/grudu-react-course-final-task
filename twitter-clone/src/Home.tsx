@@ -17,10 +17,6 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loggedInUser) {
-      navigate("/login");
-    }
-
     const fetchTweetsAndUsers = async () => {
       try {
         const tweetsData = await (
@@ -49,7 +45,7 @@ export default function Home() {
       }
     };
     fetchTweetsAndUsers();
-  }, [loggedInUser]);
+  }, []);
 
   const refInput = useRef<HTMLInputElement>(null);
 
